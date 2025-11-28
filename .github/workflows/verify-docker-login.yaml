@@ -1,0 +1,19 @@
+name: Verify Docker Login
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    - cron: 0 1 * * *
+  workflow_dispatch:
+
+jobs:
+  login:
+    name: Verify Docker Login
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}

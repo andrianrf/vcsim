@@ -1,0 +1,45 @@
+name: Code Style
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  lint:
+    name: Lint Files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Go
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: go.mod
+        id: go
+
+      - name: Go Lint
+        run: make lint
+
+  header:
+    name: Header Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Go
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: go.mod
+        id: go
+
+      - name: Run Header Check
+        run: go run hack/header/main.go -config="hack/header/config.json"

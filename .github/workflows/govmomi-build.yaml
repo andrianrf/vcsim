@@ -1,0 +1,94 @@
+name: Build
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+  schedule:
+    - cron: 0 1 * * *
+  workflow_dispatch:
+
+concurrency:
+  group: govmomi-build-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  artifacts:
+    name: Build Snapshot Release (no upload)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0 # for CHANGELOG
+
+      - name: Setup Go
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: go.mod
+
+      - name: Restore Go Cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-1.22-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-1.22-
+
+      - name: Create CHANGELOG
+        env:
+          IMAGE: quay.io/git-chglog/git-chglog
+          # https://quay.io/repository/git-chglog/git-chglog from tag v0.14.2
+          IMAGE_SHA: 998e89dab8dd8284cfff5f8cfb9e9af41fe3fcd4671f2e86a180e453c20959e3
+        run: |
+          # use a pseudo tag to only include changes since last release
+          NEXT_TAG=$(git describe --abbrev=0 --tags)-next
+          docker run --rm -v $PWD:/workdir ${IMAGE}@sha256:${IMAGE_SHA} --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md --sort semver --tag-filter-pattern '^v[0-9]+' ${NEXT_TAG}
+
+      - name: Archive CHANGELOG
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: CHANGELOG
+          path: |
+            ./RELEASE_CHANGELOG.md
+          retention-days: 1
+
+      - name: Build Artifacts
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: latest
+          # Snapshot will disable push/release.
+          args: release --clean --snapshot --release-notes RELEASE_CHANGELOG.md
+
+      - name: Verify git clean
+        shell: bash
+        run: |
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "${{ github.repository }} up to date."
+          else
+            echo "${{ github.repository }} is dirty."
+            echo "::error:: $(git status)"
+            exit 1
+          fi
+
+      # Make artifacts available for inspection.
+      # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: dist
+          # Upload some artifacts for introspection to keep storage size small.
+          path: |
+            dist/govc_*x86_64.tar.gz
+            dist/vcsim_*x86_64.tar.gz
+            dist/checksums.txt
+          retention-days: 1

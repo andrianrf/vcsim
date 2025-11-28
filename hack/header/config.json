@@ -1,0 +1,27 @@
+{
+  "headerLines": [
+    "© Broadcom. All Rights Reserved.",
+    "The term \"Broadcom\" refers to Broadcom Inc. and/or its subsidiaries.",
+    "SPDX-License-Identifier: Apache-2.0"
+  ],
+  "fileCommentPrefixes": {
+    ".go": "//",
+    ".sh": "#",
+    ".mk": "#",
+    ".yaml": "#",
+    ".yml": "#"
+  },
+  "ignoredPaths": [
+    ".chglog/**",
+    ".github/**",
+    ".golangci.yml",
+    ".goreleaser.yml",
+    "scripts/**",
+    "vim25/json/**",
+    "vim25/xml/**",
+    "govc/**/*.sh",
+    "gen/**/*.yaml",
+    "dist/**/*"
+  ],
+  "maxScanLines": 10
+}

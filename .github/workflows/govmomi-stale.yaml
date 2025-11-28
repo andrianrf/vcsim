@@ -1,0 +1,36 @@
+name: Close Stale
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: 0 1 * * *
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/stale@5f858e3efba33a5ca4407a664cc011ad407f2008 # v10.1.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+          stale-issue-message: |-
+            This issue is stale because it has been open for 90 days with no
+            activity. It will automatically close after 30 more days of
+            inactivity. Mark as fresh by adding the comment `/remove-lifecycle stale`.
+          stale-issue-label: lifecycle/stale
+          exempt-issue-labels: lifecycle/frozen
+
+          stale-pr-message: |-
+            This pull request is stale because it has been open for 90 days with
+            no activity. It will automatically close after 30 more days of
+            inactivity. Mark as fresh by adding the comment `/remove-lifecycle stale`.
+          stale-pr-label: lifecycle/stale
+          exempt-pr-labels: lifecycle/frozen
+
+          days-before-stale: 90
+          days-before-close: 30

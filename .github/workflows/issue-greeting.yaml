@@ -1,0 +1,35 @@
+name: Greeting
+
+permissions:
+  issues: write
+  contents: read
+
+on:
+  issues:
+    types: opened
+
+jobs:
+  greeting:
+    name: Send Greeting
+    runs-on: ubuntu-latest
+    if: github.event.issue.author_association == 'NONE'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 1
+
+      - name: Render Template
+        id: template
+        uses: chuhlomin/render-template@807354a04d9300c9c2ac177c0aa41556c92b3f75 # v1.10
+        with:
+          template: .github/comment-template.md
+          vars: |
+            author: ${{ github.actor }}
+
+      - name: Create Comment
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v4.1.0
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: ${{ steps.template.outputs.result }}
