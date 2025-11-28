@@ -13,7 +13,6 @@ import (
 	"net/url"
 	"os"
 	"reflect"
-	"strings"
 	"sync"
 	"time"
 
@@ -206,7 +205,7 @@ func (s *SessionManager) Logout(ctx *Context, _ *types.Logout) soap.HasFault {
 	}
 
 	ctx.postEvent(&types.UserLogoutSessionEvent{
-		IpAddress: session.IpAddress,
+		// IpAddress: session.IpAddress,
 		UserAgent: session.UserAgent,
 		SessionId: session.Key,
 		LoginTime: &session.LoginTime,
@@ -403,7 +402,7 @@ func SessionIdleWatch(ctx *Context, id string, expired func(string, time.Time, t
 // SetSession should be called after successful authentication.
 func (c *Context) SetSession(session Session, login bool) {
 	session.UserAgent = c.req.UserAgent()
-	session.IpAddress = strings.Split(c.req.RemoteAddr, ":")[0]
+	// session.IpAddress = strings.Split(c.req.RemoteAddr, ":")[0]
 	session.LastActiveTime = time.Now()
 	session.CallCount++
 
@@ -421,7 +420,7 @@ func (c *Context) SetSession(session Session, login bool) {
 
 		c.postEvent(&types.UserLoginSessionEvent{
 			SessionId: session.Key,
-			IpAddress: session.IpAddress,
+			// IpAddress: session.IpAddress,
 			UserAgent: session.UserAgent,
 			Locale:    session.Locale,
 		})
