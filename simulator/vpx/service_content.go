@@ -52,7 +52,7 @@ var ServiceContent = types.ServiceContent{
 	LicenseManager:              &types.ManagedObjectReference{Type: "LicenseManager", Value: "LicenseManager"},
 	SearchIndex:                 &types.ManagedObjectReference{Type: "SearchIndex", Value: "SearchIndex"},
 	FileManager:                 &types.ManagedObjectReference{Type: "FileManager", Value: "FileManager"},
-	DatastoreNamespaceManager:   &types.ManagedObjectReference{Type: "DatastoreNamespaceManager", Value: "DatastoreNamespaceManager"},
+	// DatastoreNamespaceManager:   &types.ManagedObjectReference{Type: "DatastoreNamespaceManager", Value: "DatastoreNamespaceManager"},
 	VirtualDiskManager:          &types.ManagedObjectReference{Type: "VirtualDiskManager", Value: "virtualDiskManager"},
 	VirtualizationManager:       (*types.ManagedObjectReference)(nil),
 	SnmpSystem:                  &types.ManagedObjectReference{Type: "HostSnmpSystem", Value: "SnmpSystem"},
