@@ -82298,7 +82298,7 @@ type UserSession struct {
 	// on client binding
 	// IpAddress string `xml:"ipAddress" json:"ipAddress"`
 	// The name of user agent or application
-	UserAgent string `xml:"userAgent" json:"userAgent"`
+	// UserAgent string `xml:"userAgent" json:"userAgent"`
 	// Number of API invocations since the session started
 	CallCount int64 `xml:"callCount" json:"callCount"`
 }
