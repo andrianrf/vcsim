@@ -82300,7 +82300,7 @@ type UserSession struct {
 	// The name of user agent or application
 	// UserAgent string `xml:"userAgent" json:"userAgent"`
 	// Number of API invocations since the session started
-	CallCount int64 `xml:"callCount" json:"callCount"`
+	// CallCount int64 `xml:"callCount" json:"callCount"`
 }
 
 func init() {

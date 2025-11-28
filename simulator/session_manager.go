@@ -404,7 +404,7 @@ func (c *Context) SetSession(session Session, login bool) {
 	// session.UserAgent = c.req.UserAgent()
 	// session.IpAddress = strings.Split(c.req.RemoteAddr, ":")[0]
 	session.LastActiveTime = time.Now()
-	session.CallCount++
+	// session.CallCount++
 
 	m := c.sessionManager()
 	m.putSession(session)
