@@ -9,6 +9,6 @@ FROM python:3.11-slim
 COPY --from=build /go/src/app/vcsim /vcsim
 EXPOSE 8989
 ENTRYPOINT ["./vcsim/vcsim"]
-CMD ["-l", "0.0.0.0:8989"]
+CMD ["-l", "0.0.0.0:8989", "-trace"]
 
 # CMD ["sleep", "infinity"]
